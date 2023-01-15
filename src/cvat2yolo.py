@@ -8,10 +8,9 @@ import yaml
 
 from utils import Coords, Label
 
-
 if __name__ == '__main__':
     CVAT_DIR = "./data/cvat/"
-    YOLO_DIR = "./data/yolo/"
+    YOLO_DIR = "../andre_v2/data/yolo/"
 
     xml_path = "./data/cvat/annotations.xml"
     with open(xml_path, 'r') as xmlfile:
@@ -52,29 +51,37 @@ if __name__ == '__main__':
     print()
     print(df)
 
-    SUBDIRS = ("train", "valid", "test")
+    SUBDIRS = ("train", "val", "test")
     IMAGE_DIRS = {subdir: os.path.join(YOLO_DIR, "images", subdir) for subdir in SUBDIRS}
     LABEL_DIRS = {subdir: os.path.join(YOLO_DIR, "labels", subdir) for subdir in SUBDIRS}
     for subdir in itertools.chain(IMAGE_DIRS.values(), LABEL_DIRS.values()):
         os.makedirs(subdir, exist_ok=True)
 
-    CVAT_IMAGES = os.path.join(CVAT_DIR, "images")
-    for page_id, subdir in ((1, 'valid'), (3, 'train')):
-        annot_path = os.path.join(LABEL_DIRS[subdir], f"page-{page_id}.tsv")
-        page_data = df.loc[df.image_id == page_id].drop('image_id', axis=1)
-        page_data.to_csv(annot_path, sep='\t', index=False, header=False)
+    pages_mapping = {
+        1: ('train', ),
+        2: ('val', ),
+        3: ('train', ),
+        4: ('train', ),
+        5: ('train', 'val'),
+        6: ('val', ),
+        7: ('val', ),
+    }
 
+    CVAT_IMAGES = os.path.join(CVAT_DIR, "images")
+    for page_id, subdirs in pages_mapping.items():
+        page_data = df.loc[df.image_id == page_id].drop('image_id', axis=1)
         image_fn = f"page-{page_id}.jpg"
-        shutil.copy(os.path.join(CVAT_IMAGES, image_fn), os.path.join(IMAGE_DIRS[subdir], image_fn))
+        
+        for subdir in subdirs:
+            annot_path = os.path.join(LABEL_DIRS[subdir], f"page-{page_id}.txt")
+            page_data.to_csv(annot_path, sep='\t', index=False, header=False)
+            shutil.copy(os.path.join(CVAT_IMAGES, image_fn), os.path.join(IMAGE_DIRS[subdir], image_fn))
 
     config_path = os.path.join(YOLO_DIR, "config.yaml")
     with open(config_path, 'w+') as file:
         config = dict(
-            # train=os.path.join(IMAGES_DIR, "train"),
-            # valid=os.path.join(IMAGES_DIR, "valid"),
-            # test=os.path.join(IMAGES_DIR, "test"),
+            **IMAGE_DIRS,
             nc=len(CLASSES),
             names=list(CLASSES.keys()),
-            **IMAGE_DIRS,
         )
         file.write(yaml.dump(config))
