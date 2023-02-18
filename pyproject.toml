@@ -13,6 +13,7 @@ xmltodict = "^0.13.0"
 pyyaml = "^6.0"
 scikit-learn = "^1.2.0"
 autopep8 = "^2.0.1"
+matplotlib = "^3.6.3"
 
 
 [build-system]

@@ -58,20 +58,20 @@ if __name__ == '__main__':
         os.makedirs(subdir, exist_ok=True)
 
     pages_mapping = {
-        1: ('train', ),
-        2: ('val', ),
-        3: ('train', ),
-        4: ('train', ),
-        5: ('train', 'val'),
-        6: ('val', ),
-        7: ('val', ),
+        1: ('test', 'train'),
+        2: ('test', 'val'),
+        3: ('test', 'val'),
+        4: ('test', 'train'),
+        5: ('test', 'train'),
+        6: ('test', 'val'),
+        7: ('test', 'train'),
     }
 
     CVAT_IMAGES = os.path.join(CVAT_DIR, "images")
     for page_id, subdirs in pages_mapping.items():
         page_data = df.loc[df.image_id == page_id].drop('image_id', axis=1)
         image_fn = f"page-{page_id}.jpg"
-        
+
         for subdir in subdirs:
             annot_path = os.path.join(LABEL_DIRS[subdir], f"page-{page_id}.txt")
             page_data.to_csv(annot_path, sep='\t', index=False, header=False)

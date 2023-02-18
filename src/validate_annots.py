@@ -63,6 +63,7 @@ def plot_bounding_box(image, annotation_list, width=3):
 # Get any random annotation file
 subdir, filename = "val", "page-1"
 subdir, filename = "train", "page-3"
+subdir, filename = "train", "page-5"
 IMAGE_FILE = os.path.join(config[subdir], f"{filename}.jpg")
 LABEL_FILE = IMAGE_FILE.replace("images", "labels").replace("jpg", "txt")
 
