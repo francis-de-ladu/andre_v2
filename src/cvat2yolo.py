@@ -1,12 +1,13 @@
 import itertools
+import json
 import os
 import shutil
-
 import pandas as pd
 import xmltodict
 import yaml
 
 from utils import Coords, Label
+
 
 if __name__ == '__main__':
     CVAT_DIR = "./data/cvat/"
@@ -57,28 +58,20 @@ if __name__ == '__main__':
     for subdir in itertools.chain(IMAGE_DIRS.values(), LABEL_DIRS.values()):
         os.makedirs(subdir, exist_ok=True)
 
-    pages_mapping = {
-        1: ('test', 'train'),
-        2: ('test', 'val'),
-        3: ('test', 'val'),
-        4: ('test', 'train'),
-        5: ('test', 'train'),
-        6: ('test', 'val'),
-        7: ('test', 'train'),
-    }
+    with open("config/page_mapping.json", 'r') as config:
+        page_mapping = json.load(config)
 
     CVAT_IMAGES = os.path.join(CVAT_DIR, "images")
-    for page_id, subdirs in pages_mapping.items():
+    for page_id, subdir in page_mapping.items():
         page_data = df.loc[df.image_id == page_id].drop('image_id', axis=1)
         image_fn = f"page-{page_id}.jpg"
 
-        for subdir in subdirs:
-            annot_path = os.path.join(LABEL_DIRS[subdir], f"page-{page_id}.txt")
-            page_data.to_csv(annot_path, sep='\t', index=False, header=False)
-            shutil.copy(os.path.join(CVAT_IMAGES, image_fn), os.path.join(IMAGE_DIRS[subdir], image_fn))
+        annot_path = os.path.join(LABEL_DIRS[subdir], f"page-{page_id}.txt")
+        page_data.to_csv(annot_path, sep='\t', index=False, header=False)
+        shutil.copy(os.path.join(CVAT_IMAGES, image_fn), os.path.join(IMAGE_DIRS[subdir], image_fn))
 
-    config_path = os.path.join(YOLO_DIR, "config.yaml")
-    with open(config_path, 'w+') as file:
+    CONFIG_PATH = os.path.join(YOLO_DIR, "config.yaml")
+    with open(CONFIG_PATH, 'w+') as file:
         config = dict(
             **IMAGE_DIRS,
             nc=len(CLASSES),

@@ -34,3 +34,15 @@ class Coords:
             w=round(self.w / width, 5),
             h=round(self.h / height, 5),
         )
+
+    def to_yolo_crops(self, image_id: str, block_size: int, cid: str) -> Dict[str, Union[int, float]]:
+        return dict(
+            image_id=str(int(image_id) + 1),
+            px=int(round(self.cx // block_size, 5)),
+            py=int(round(self.cy // block_size, 5)),
+            cid=cid,
+            cx=round((self.cx % block_size) / block_size, 5),
+            cy=round((self.cy % block_size) / block_size, 5),
+            w=round(self.w / block_size, 5),
+            h=round(self.h / block_size, 5),
+        )
