@@ -4,9 +4,9 @@ MODEL=$1
 EPOCHS=${2:-2000}
 PATIENCE=${3:-0}
 WORKERS=${4:-4}
-IMG=${5:-600}
+IMG=${5:-800}
 
-NAME=${MODEL}_${IMG}
+NAME=${MODEL}_${IMG}_
 
 python ../yolov5/train.py \
     --img ${IMG} \
@@ -14,7 +14,7 @@ python ../yolov5/train.py \
     --weights ${MODEL}.pt \
     --workers ${WORKERS} \
     --epochs ${EPOCHS} \
+    --name ${NAME} \
     --data data/yolo/config.yaml \
-    --name andre \
     --batch -1 \
     --cache ram

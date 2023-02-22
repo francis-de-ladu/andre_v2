@@ -15,10 +15,10 @@ BLOCK_SIZE = 600
 WIDTH, HEIGHT = 3600, 2400
 
 
-def get_output_filename(start_x, start_y, block_size, *, extension):
+def get_output_filename(page_id, start_x, start_y, block_size, *, extension):
     assert extension in ('jpg', 'txt')
     end_x, end_y = start_x + block_size, start_y + block_size
-    return f"{start_x}@{end_x}__{start_y}@{end_y}.{extension}"
+    return f"{page_id}__{start_x}@{end_x}__{start_y}@{end_y}.{extension}"
 
 
 if __name__ == '__main__':
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 crop_mask = (df.px == start_x // BLOCK_SIZE) & (df.py == start_y // BLOCK_SIZE)
                 crop_annots = df.loc[page_mask & crop_mask].drop(['image_id', 'px', 'py'], axis=1)
 
-                filename = get_output_filename(start_x, start_y, BLOCK_SIZE, extension='txt')
+                filename = get_output_filename(page_id, start_x, start_y, BLOCK_SIZE, extension='txt')
                 annot_dir = LABEL_DIRS[subdir] / page_dir
                 annot_dir.mkdir(parents=True, exist_ok=True)
 

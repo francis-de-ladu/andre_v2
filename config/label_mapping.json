@@ -1,0 +1,226 @@
+[
+    {
+        "name": "interrupt-unipolaire",
+        "id": 466100,
+        "color": "#24b353",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "interrupt-3-way",
+        "id": 466102,
+        "color": "#83e070",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "interrupt-4-way",
+        "id": 466113,
+        "color": "#34d1b7",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "telephone-mur",
+        "id": 466114,
+        "color": "#fa32b7",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "lumin-urg-rect",
+        "id": 462436,
+        "color": "#dbaf3e",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "lumin-cercle",
+        "id": 462435,
+        "color": "#fce94f",
+        "type": "ellipse",
+        "attributes": []
+    },
+    {
+        "name": "lumin-rect",
+        "id": 462438,
+        "color": "#dbe94f",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "lumin-rail",
+        "id": 462439,
+        "color": "#ca9e5b",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "gradateur",
+        "id": 462440,
+        "color": "#33ddff",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "telephone-plancher",
+        "id": 466116,
+        "color": "#ff355e",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "haut-parleur",
+        "id": 466177,
+        "color": "#3d3df5",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "haut-parleur-feu",
+        "id": 466178,
+        "color": "#733380",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "informatique-mur",
+        "id": 466179,
+        "color": "#aaf0d1",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "informatique-comptoir",
+        "id": 466180,
+        "color": "#ff00cc",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "informatique-plancher",
+        "id": 466181,
+        "color": "#ff6a4d",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "telephone-informatique-mur",
+        "id": 466182,
+        "color": "#fa3253",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "telephone-informatique-plancher",
+        "id": 466183,
+        "color": "#aaf0d1",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "panneau-controle",
+        "id": 466184,
+        "color": "#b25050",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "panneau-relais",
+        "id": 466185,
+        "color": "#cc9933",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "lumin-urg-cercle",
+        "id": 462437,
+        "color": "#fcaf3e",
+        "type": "ellipse",
+        "attributes": []
+    },
+    {
+        "name": "telephone-comptoir",
+        "id": 466115,
+        "color": "#fa7dbb",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "boite-jonction",
+        "id": 466186,
+        "color": "#b83df5",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "panneau-electrique-208",
+        "id": 466187,
+        "color": "#cc3366",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "panneau-electrique-240",
+        "id": 466188,
+        "color": "#cc3366",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "panneau-electrique-600",
+        "id": 466189,
+        "color": "#8c78f0",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "sortie-cablodist",
+        "id": 466203,
+        "color": "#32b7fa",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-15A-mur",
+        "id": 466209,
+        "color": "#ff007c",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-20A-mur",
+        "id": 466210,
+        "color": "#5d9d98",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-detect-faute",
+        "id": 466211,
+        "color": "#51c854",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-15A-comptoir",
+        "id": 466212,
+        "color": "#871510",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-15A-plancher",
+        "id": 466213,
+        "color": "#5627d3",
+        "type": "rectangle",
+        "attributes": []
+    },
+    {
+        "name": "prise-15A-plafond",
+        "id": 466214,
+        "color": "#bc0169",
+        "type": "rectangle",
+        "attributes": []
+    }
+]
