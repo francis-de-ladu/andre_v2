@@ -15,4 +15,5 @@ python ../yolov5/detect.py \
     --hide-labels \
     --device cpu \
     --exist-ok \
+    --save-txt \
     --line-thickness 2

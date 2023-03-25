@@ -9,8 +9,9 @@ import yaml
 
 from utils import Coords, Label, Coords2
 
+SCALING = 2
 
-BLOCK_SIZE = 600
+BLOCK_SIZE = 800 // SCALING
 HALF_BLOCK = BLOCK_SIZE // 2
 
 WIDTH, HEIGHT = 3600, 2400
@@ -26,7 +27,9 @@ def get_frame_size(frame):
 
 
 def get_output_filename(page_id, start_x, start_y, end_x, end_y):
-    return f"{page_id}__{start_x}@{end_x}__{start_y}@{end_y}.txt"
+    start_x, end_x = start_x * SCALING, end_x * SCALING
+    start_y, end_y = start_y * SCALING, end_y * SCALING
+    return f"{page_id}__{start_x:04d}@{end_x:04d}__{start_y:04d}@{end_y:04d}.txt"
 
 
 if __name__ == "__main__":
