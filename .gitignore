@@ -192,4 +192,5 @@ poetry.toml
 # Custom files and directories
 /cvat
 /data
+/out
 *.pt

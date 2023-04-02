@@ -3,10 +3,12 @@ from collections import defaultdict
 from pathlib import Path
 from pprint import pprint
 
+import numpy as np
 import pandas as pd
 import random
 from validate_annots import plot_bounding_box
 from PIL import Image
+from tqdm import tqdm
 
 
 def get_min_and(coords: str) -> tuple[int, int]:
@@ -30,9 +32,12 @@ def get_tile_params(tile_preds_path: Path) -> tuple[str, dict[str, dict[str, int
 
 
 def display_predictions(
-    pageid: str, annots: pd.DataFrame, nb_colors: int = 2**24 - 1
+    pageid: str,
+    annots: pd.DataFrame,
+    nb_colors: int = 2**24 - 1,
+    save_only=False,
 ) -> None:
-    random.seed(42)
+    random.seed(2023)
     colors = {
         int(clas): "#" + str(hex(random.randint(0, nb_colors))[2:].zfill(6))
         for clas in annots["cls"].unique()
@@ -41,7 +46,7 @@ def display_predictions(
     image = Image.open(f"cvat/images/page-{pageid}.jpg")
     image = image.resize(map(lambda x: x * 2, image.size))
 
-    plot_bounding_box(image, annots.values.tolist(), colors=colors)
+    plot_bounding_box(image, annots.values.tolist(), colors=colors, save_only=save_only)
 
 
 def convert_to_bounding_boxes(annots: pd.DataFrame) -> pd.DataFrame:
@@ -57,22 +62,66 @@ def convert_to_bounding_boxes(annots: pd.DataFrame) -> pd.DataFrame:
     return annots.drop(columns=["x_size", "y_size"], axis=1).round().astype(int)
 
 
-def compute_overlap(rect1, rect2) -> float:
+def compute_overlap(rect1, rect2, symmetrical=False) -> float:
     overlap_x = max(rect1["x0"], rect2["x0"]) - min(rect1["x1"], rect2["x1"])
     overlap_y = max(rect1["y0"], rect2["y0"]) - min(rect1["y1"], rect2["y1"])
     if overlap_x > 0 or overlap_y > 0:
         return 0
 
     area_overlap = overlap_x * overlap_y
-    # return area_overlap / rect1["area"]
-    return area_overlap / (rect1["area"] + rect2["area"] - area_overlap)
+    if symmetrical:
+        return area_overlap / (rect1["area"] + rect2["area"] - area_overlap)
+    else:
+        return area_overlap / rect1["area"]
 
 
-def main(full_preds_path: Path) -> None:
+def remove_overlaps(preds: pd.DataFrame, threshold: float) -> pd.DataFrame:
+    nb_preds = len(preds)
+    overlap_ratios = np.ndarray([nb_preds, nb_preds])
+
+    preds = preds.reset_index(drop=False)
+
+    for idx1, pred1 in tqdm(preds.iterrows(), total=len(preds)):
+        for idx2, pred2 in preds.iterrows():
+            overlap_ratios[idx1, idx2] = compute_overlap(pred1, pred2, symmetrical=True)
+
+    grouped_preds = set()
+    for overlaps in overlap_ratios:
+        indices = np.argwhere(overlaps > threshold).reshape(-1)
+        grouped_preds.add(tuple(indices))
+
+    # print(sorted(grouped_preds))
+
+    cleaned_preds = []
+    for indices in grouped_preds:
+        current_preds = preds.loc[list(indices)].reset_index(drop=True)
+        nb_current = len(current_preds)
+
+        overlap_ratios = np.ndarray([nb_current, nb_current])
+        for idx1, pred1 in current_preds.iterrows():
+            for idx2, pred2 in current_preds.iterrows():
+                overlap_ratios[idx1, idx2] = compute_overlap(
+                    pred1, pred2, symmetrical=False
+                )
+
+        overall = overlap_ratios.sum(axis=0)
+        best = current_preds.iloc[overall.argmax()]
+
+        cleaned_preds.append(best)
+
+    cleaned_preds = pd.DataFrame(cleaned_preds).drop_duplicates()
+    return cleaned_preds.set_index("index")
+
+
+def main(full_preds_path: Path, pageid: str | None) -> None:
     COLUMNS = ["cls", "x_center", "y_center", "x_size", "y_size"]
     all_preds = defaultdict(list)
 
-    for tile_preds_path in sorted(full_preds_path.glob("*")):  # [:3]:
+    fn_format = "*.txt"
+    if pageid is not None:
+        fn_format = f"{pageid}__{fn_format}"
+
+    for tile_preds_path in sorted(full_preds_path.glob(fn_format)):
         pageid, coords = get_tile_params(tile_preds_path)
 
         with tile_preds_path.open("r") as fp:
@@ -90,18 +139,39 @@ def main(full_preds_path: Path) -> None:
 
         all_preds[pageid].extend(preds.values.tolist())
 
-    all_preds = pd.DataFrame(all_preds[pageid], columns=COLUMNS)
-    all_preds.sort_values(by=COLUMNS[1:], inplace=True)
-    # display_predictions(pageid, all_preds.astype(int))
+    OUT_DIR = Path("out")
+    OUT_DIR.mkdir(exist_ok=True)
 
-    all_preds = convert_to_bounding_boxes(all_preds)
-    # all_preds["overlap"] = all_preds.iloc[:10].apply(
-    all_preds["overlap"] = all_preds.apply(
-        lambda x: compute_overlap(all_preds.iloc[0], x), axis=1
-    )
-    print(all_preds)
+    for pageid, raw_preds in all_preds.items():
+        raw_preds = pd.DataFrame(raw_preds, columns=COLUMNS)
+
+        formatted_preds = convert_to_bounding_boxes(raw_preds.copy())
+
+        clean_preds = remove_overlaps(formatted_preds, threshold=0.2)
+        clean_preds = remove_overlaps(clean_preds, threshold=0.5)
+
+        save_preds = raw_preds.loc[clean_preds.index].round(1)
+        save_preds.sort_values(
+            by=["cls", "x_center", "y_center", "x_size", "y_size"], inplace=True
+        )
+
+        out_path = OUT_DIR / f"{pageid}.txt"
+        save_preds.to_csv(out_path, header=False, index=False, sep="\t")
+
+        # display_predictions(pageid, save_preds.astype(int))
 
 
 if __name__ == "__main__":
     full_preds_path = Path(sys.argv[1])
-    main(full_preds_path)
+    pageid = sys.argv[2] if len(sys.argv) > 2 else None
+
+    if len(sys.argv) > 3:
+        preds = pd.read_csv(
+            full_preds_path,
+            names=["cls", "x_center", "y_center", "x_size", "y_size"],
+            index_col=False,
+            sep="\t",
+        )
+        display_predictions(pageid, preds, save_only=True)
+    else:
+        main(full_preds_path, pageid)

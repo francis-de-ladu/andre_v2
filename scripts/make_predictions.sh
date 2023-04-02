@@ -15,5 +15,6 @@ python ../yolov5/detect.py \
     --hide-labels \
     --device cpu \
     --exist-ok \
+    --agnostic-nms \
     --save-txt \
     --line-thickness 2

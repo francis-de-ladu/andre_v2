@@ -8,7 +8,7 @@ import yaml
 from PIL import Image, ImageDraw
 
 
-def plot_bounding_box(image, annotation_list, width=3, colors=None):
+def plot_bounding_box(image, annotation_list, width=3, colors=None, save_only=False):
     annotations = np.array(annotation_list)
     w, h = image.size
     print(w, h)
@@ -50,10 +50,13 @@ def plot_bounding_box(image, annotation_list, width=3, colors=None):
         # )
 
     # image.format = 'png'
-    plt.imshow(np.array(image))
-    # plt.imsave("supsup.jpg", np.array(image))
+    if save_only:
+        plt.imsave("out/saved.jpg", np.array(image))
+    else:
+        plt.imshow(np.array(image))
+        # plt.imsave("supsup.jpg", np.array(image))
 
-    plt.show()
+        plt.show()
 
 
 if __name__ == "__main__":
