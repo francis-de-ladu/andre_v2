@@ -192,5 +192,7 @@ poetry.toml
 # Custom files and directories
 /cvat
 /data
+/data_bis
+/models
 /out
 *.pt

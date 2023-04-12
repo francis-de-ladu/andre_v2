@@ -14,6 +14,12 @@ pyyaml = "^6.0"
 scikit-learn = "^1.2.0"
 autopep8 = "^2.0.1"
 matplotlib = "^3.6.3"
+onnx = "^1.13.1"
+onnxruntime = "^1.14.1"
+segment-anything = {git = "https://github.com/facebookresearch/segment-anything.git"}
+torch = {version = "2.0.0", extras = ["cu118"]}
+torchvision = {version = "0.15.1", extras = ["cu118"]}
+hdbscan = "^0.8.29"
 
 
 [build-system]
